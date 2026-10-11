@@ -92,12 +92,27 @@ de Esri. Con la de la NASA no hay ninguna de las dos ataduras.
 Desde `E:\TNC_2026\PowerBI`, en este orden:
 
 ```
-python rasterizar_capas.py    # las ocho capas ráster a PNG
-python generar_satelital.py   # el mapa base satelital
-python preparar_insumos.py    # TopoJSON y tablas del modelo
-python construir_tablero.py   # arma las tres salidas
+python rasterizar_capas.py      # las ocho capas ráster a PNG
+python generar_satelital.py     # el mapa base satelital
+python preparar_insumos.py      # TopoJSON y tablas del modelo
+python estadisticas_zonales.py  # cruce de rásteres con límites regionales
+python construir_tablero.py     # arma las tres salidas
 ```
 
-`rasterizar_capas.py` reescribe el manifiesto, por eso va antes que
-`generar_satelital.py`. El último paso escribe `tablero_zer.html` y las dos
-páginas de esta carpeta.
+El orden importa: `rasterizar_capas.py` reescribe el manifiesto, por eso va
+antes que `generar_satelital.py`, y `estadisticas_zonales.py` lee de ese
+manifiesto qué valor de píxel es cada clase. El último paso escribe
+`tablero_zer.html` y las dos páginas de esta carpeta.
+
+Esos scripts necesitan el Python de QGIS y sus variables de entorno
+(`PYTHONHOME`, `PROJ_DATA`, `GDAL_DATA`); lo más cómodo es lanzarlos desde la
+consola de OSGeo4W que instala QGIS.
+
+## Comprobación de consistencia
+
+El cruce zonal sirve además de control: la clase «Excelente» de la
+zonificación reproduce exactamente la superficie del escenario 1 del documento
+(772 850 ha solar y 550 975 ha eólico), y las tres clases juntas dan el
+escenario 2 con una diferencia de dos a siete píxeles de borde. Si al
+regenerar los insumos esas cifras dejan de cuadrar, algo cambió en los
+rásteres de partida.
