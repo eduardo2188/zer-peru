@@ -181,7 +181,10 @@ h1,h2,h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
 
 /* --------------------------------------------------------------- tarjetas */
 .fila { display: grid; grid-template-columns: minmax(0,1.12fr) minmax(0,1fr);
-        gap: 16px; align-items: start; }
+        gap: 16px; align-items: stretch; }
+#tarjetaRanking { display: flex; flex-direction: column; }
+#tarjetaRanking .barras { flex: 1; justify-content: space-between;
+                          min-height: 0; }
 .tarjeta { background: var(--panel); border: 1px solid var(--linea);
            border-radius: var(--radio); box-shadow: var(--sombra);
            padding: 17px 19px 19px; min-width: 0; }
@@ -488,7 +491,7 @@ table.comp tr:last-child td { border-bottom: 0; }
         </div>
       </div>
 
-      <div class="tarjeta">
+      <div class="tarjeta" id="tarjetaRanking">
         <h2>Regional ranking</h2>
         <p class="cap">Estimated installable capacity, in MW. Click any bar to open the profile of that region.</p>
         <div class="barras" id="barras"></div>
@@ -704,18 +707,24 @@ svgMapa.addEventListener('dblclick', e => {
 
 // Se distingue arrastrar de pulsar por la distancia recorrida: si no, cada
 // paneo terminaría seleccionando la región que quedó debajo del dedo.
-let pulsa = null, arrastro = false;
+let pulsa = null, arrastro = false, capturado = null;
 svgMapa.addEventListener('pointerdown', e => {
-  pulsa = { x: e.clientX, y: e.clientY, vx: vista.x, vy: vista.y };
+  pulsa = { x: e.clientX, y: e.clientY, vx: vista.x, vy: vista.y, id: e.pointerId };
   arrastro = false;
-  svgMapa.setPointerCapture(e.pointerId);
 });
 svgMapa.addEventListener('pointermove', e => {
   if (!pulsa) return;
   const dx = e.clientX - pulsa.x, dy = e.clientY - pulsa.y;
   if (!arrastro && Math.hypot(dx, dy) < 4) return;
-  arrastro = true;
-  svgMapa.classList.add('arrastrando');
+  if (!arrastro) {
+    // Capturar el puntero sólo cuando el arrastre empieza de verdad. Si se
+    // captura desde el pointerdown, el navegador redirige también el clic al
+    // elemento que captura y la región de debajo nunca lo recibe.
+    arrastro = true;
+    capturado = pulsa.id;
+    svgMapa.setPointerCapture(capturado);
+    svgMapa.classList.add('arrastrando');
+  }
   const r = svgMapa.getBoundingClientRect();
   vista.x = pulsa.vx - dx / r.width * vista.w;
   vista.y = pulsa.vy - dy / r.height * vista.h;
@@ -724,8 +733,13 @@ svgMapa.addEventListener('pointermove', e => {
 ['pointerup', 'pointercancel'].forEach(ev =>
   svgMapa.addEventListener(ev, () => {
     pulsa = null;
+    if (capturado !== null) {
+      try { svgMapa.releasePointerCapture(capturado); } catch (err) {}
+      capturado = null;
+    }
     svgMapa.classList.remove('arrastrando');
-    // El clic del path llega después; darle un respiro antes de rehabilitarlo.
+    // El clic llega después del pointerup; dejar el aviso puesto hasta que
+    // pase, o un arrastre acabaría seleccionando la región de debajo.
     setTimeout(() => { arrastro = false; }, 0);
   }));
 
