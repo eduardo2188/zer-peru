@@ -1,13 +1,20 @@
-# Tablero de zonificación de energías renovables — carpeta para publicar
+# Tablero de zonificación de energías renovables · carpeta para publicar
 
-`index.html` es la página completa. **No necesita nada más**: el mapa, las ocho
-capas ráster, el relieve, el logo y todos los datos van incrustados dentro del
-propio archivo. No llama a ningún servidor externo salvo la hoja de tipografías
-de Google Fonts, y si esa no carga la página se ve igual con la tipografía del
-sistema.
+Dos páginas, una por idioma:
 
-Pesa 1,1 MB. Funciona abriéndola con doble clic, desde una memoria USB o desde
-cualquier hosting estático.
+| Archivo | Idioma | Dirección una vez publicado |
+|---|---|---|
+| `index.html` | Español | la raíz del sitio |
+| `en/index.html` | Inglés | `/en/` |
+
+Cada una se basta sola. El mapa base satelital, las ocho capas ráster, el logo
+y todos los datos van incrustados dentro del propio archivo. No llaman a ningún
+servidor externo salvo la hoja de tipografías de Google Fonts, y si esa no
+carga la página se ve igual con la tipografía del sistema. Pesan 1,4 MB cada
+una. El conmutador de idioma del riel enlaza una con otra, así que hay que
+subir las dos juntas conservando la carpeta `en`.
+
+Elaborado por Eduardo Rojas Baez y Christian Contreras Otiniano.
 
 ---
 
@@ -16,9 +23,9 @@ cualquier hosting estático.
 Es la que da una dirección institucional, del tipo
 `https://mapas.minem.gob.pe/zer/tablero/`.
 
-Entregar `index.html` al área que administra el portal y pedir que lo coloquen
-en una carpeta del servidor web. Para ellos es copiar un archivo: no hay base de
-datos, ni backend, ni dependencias que instalar.
+Entregar la carpeta al área que administra el portal y pedir que la coloquen en
+el servidor web. Para ellos es copiar dos archivos: no hay base de datos, ni
+backend, ni dependencias que instalar.
 
 ## Opción B · GitHub Pages (gratuito y permanente)
 
@@ -53,16 +60,36 @@ Dirección del tipo `https://zer-peru.netlify.app`.
 
 ---
 
-## Volver a generar la página
+## El mapa base
 
-Desde `E:\TNC_2026\PowerBI`:
+Es la imagen satelital **Blue Marble** de la NASA, con sombreado de relieve y
+batimetría, pedida al servicio GIBS ya recortada a la caja del estudio. Es
+imagen de dominio público: se puede incrustar y redistribuir sin pedir permiso
+ni pagar licencia, que es justo lo que hace falta en una página que se va a
+copiar a varios sitios.
+
+Si en algún momento se quiere más detalle en la cordillera, hay una alternativa
+con la imagen de Esri:
 
 ```
-python generar_relieve.py     # mapa base de relieve, solo si cambia el DEM
+python generar_satelital.py esri
+```
+
+Se ve más nítida, pero obliga a citar a «Esri, Maxar, Earthstar Geographics y
+la comunidad de usuarios SIG» y su redistribución queda sujeta a los términos
+de Esri. Con la de la NASA no hay ninguna de las dos ataduras.
+
+## Volver a generar las páginas
+
+Desde `E:\TNC_2026\PowerBI`, en este orden:
+
+```
 python rasterizar_capas.py    # las ocho capas ráster a PNG
+python generar_satelital.py   # el mapa base satelital
 python preparar_insumos.py    # TopoJSON y tablas del modelo
-python construir_tablero.py   # arma la página
+python construir_tablero.py   # arma las tres salidas
 ```
 
-El último paso escribe dos archivos: `tablero_zer.html` (fragmento para
-incrustar) y `publicar/index.html` (esta página completa).
+`rasterizar_capas.py` reescribe el manifiesto, por eso va antes que
+`generar_satelital.py`. El último paso escribe `tablero_zer.html` y las dos
+páginas de esta carpeta.
