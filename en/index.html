@@ -100,7 +100,11 @@ h1,h2,h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
 .cabecera::after { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(85% 70% at 90% 5%, rgba(255,255,255,.20), transparent 62%); }
 .cabecera > * { position: relative; z-index: 1; }
-.cabecera img { width: 152px; height: auto; display: block; margin-bottom: 16px; }
+/* El logo manda en el riel: banda propia de borde a borde. */
+.marca { margin: -22px -22px 18px; padding: 20px 20px 18px;
+         background: rgba(255,255,255,.07);
+         border-bottom: 1px solid rgba(255,255,255,.14); }
+.cabecera img { width: 100%; height: auto; display: block; }
 .cabecera .inst { font-size: 9px; font-weight: 700; letter-spacing: .13em;
                   text-transform: uppercase; color: rgba(255,255,255,.72);
                   display: block; margin-bottom: 8px; }
@@ -254,7 +258,9 @@ h1,h2,h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
   background: rgba(7,21,29,.68); backdrop-filter: blur(8px); color: #fff;
   border: 1px solid rgba(255,255,255,.18); border-radius: 11px; padding: 9px 12px 10px; }
 .panelLeyenda .tit { font-size: 8.5px; font-weight: 700; letter-spacing: .11em;
-  text-transform: uppercase; color: rgba(255,255,255,.62); margin-bottom: 7px; }
+  text-transform: uppercase; color: rgba(255,255,255,.72); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 6px; }
+.panelLeyenda .tit .ico { color: #fff; opacity: .9; }
 .panelLeyenda .items { display: flex; flex-wrap: wrap; gap: 4px 14px; }
 .panelLeyenda .items div { display: flex; align-items: center; gap: 6px;
   font-size: 10px; color: rgba(255,255,255,.93); }
@@ -320,7 +326,9 @@ h1,h2,h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
 .rosca svg { flex: none; }
 .rosca .info { min-width: 0; flex: 1; }
 .rosca .ti { font-size: 10.5px; font-weight: 700; color: var(--tinta);
-             margin-bottom: 7px; line-height: 1.3; }
+             margin-bottom: 7px; line-height: 1.3; display: flex;
+             align-items: center; gap: 6px; }
+.rosca .ti .ico { color: var(--acento, var(--verde)); flex: none; }
 .rosca ul { list-style: none; margin: 0; padding: 0; display: flex;
             flex-direction: column; gap: 3px; }
 .rosca li { display: grid; grid-template-columns: 9px 1fr auto; gap: 7px;
@@ -481,6 +489,8 @@ table.comp tr:last-child td { border-bottom: 0; }
   .lienzo { padding: 16px 14px 28px; }
   .hero { padding: 20px 18px; }
   .hero h2 { font-size: 19px; }
+  .marca { padding: 16px 16px 14px; }
+  .cabecera img { max-width: 240px; }
   .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
   .kpi .v { font-size: 25px; }
   body::before { background-size: auto 90vh; background-position: right -35vw bottom; }
@@ -493,7 +503,7 @@ table.comp tr:last-child td { border-bottom: 0; }
 <div class="marco">
   <aside class="riel">
     <div class="cabecera">
-      <img id="logo" alt="The Nature Conservancy">
+      <div class="marca"><img id="logo" alt="The Nature Conservancy"></div>
       <span class="inst">Ministry of Energy and Mines of Peru</span>
       <h1>Zoning for <em>renewable energy</em></h1>
       <span class="sub">Low environmental impact areas · Peru</span>
@@ -658,8 +668,23 @@ const ICONOS = {
   capas: '<path d="M12 3 3 7.8l9 4.8 9-4.8z"/><path d="M3 12.8 12 17.6l9-4.8"/>',
   satelite: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.6v2.6M12 18.8v2.6' +
     'M2.6 12h2.6M18.8 12h2.6"/><circle cx="12" cy="12" r="8.6" stroke-dasharray="3 3"/>',
-  aviso: '<circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.2M12 16.2h.01"/>'
+  aviso: '<circle cx="12" cy="12" r="9"/><path d="M12 7.6v5.2M12 16.2h.01"/>',
+  mapa: '<path d="M9 3 3 5.6v15.2L9 18.2l6 2.6 6-2.6V3l-6 2.6z"/>' +
+    '<path d="M9 3v15.2M15 5.6v15.2"/>',
+  escudo: '<path d="M12 2.6 20 5.3v6c0 4.9-3.3 8.5-8 9.8-4.7-1.3-8-4.9-8-9.8v-6z"/>' +
+    '<path d="m8.8 11.8 2.3 2.3 4.2-4.3"/>',
+  hoja: '<path d="M20.2 3.8c0 8.9-4.9 13.9-11.4 13.9-2.5 0-4.5-1.6-4.5-4 0-6.3 7-9.9 15.9-9.9z"/>' +
+    '<path d="M4.3 20.2c2.5-4.6 6.4-8.2 11.4-10.6"/>',
+  medidor: '<path d="M3.5 18.2a9 9 0 1 1 17 0"/><path d="m12 14 4.3-4.8"/>' +
+    '<circle cx="12" cy="18.2" r="1.4" fill="currentColor" stroke="none"/>',
+  barras: '<path d="M4.6 20.2v-4.6M9.7 20.2V10.4M14.8 20.2v-7.2M19.9 20.2V4.8"/>'
 };
+
+// Cada capa del mapa con su icono. El mismo icono se repite en la leyenda y
+// en las roscas del perfil, para que se vea que hablan de lo mismo.
+const ICONO_CAPA = { coropletico: 'mapa', zon: 'escudo', sen: 'hoja',
+                     ido: 'medidor', rec: 'barras' };
+const iconoCapa = id => ICONO_CAPA[id === 'coropletico' ? id : id.split('_')[0]] || 'capas';
 function icono(nombre, tam) {
   const d = ICONOS[nombre];
   if (!d) return '';
@@ -1070,7 +1095,8 @@ function pintarRoscas(d, a, b) {
   const gris = 'var(--panel-2)';
   const tarjetas = [];
 
-  [[T.d4, a, 1], [T.d5, b, 2]].forEach(([titulo, fila]) => {
+  const icoRec = icono(iconoRecurso(estado.recurso), 13) + ' ';
+  [[icoRec + T.d4, a, 1], [icoRec + T.d5, b, 2]].forEach(([titulo, fila]) => {
     const apta = fila.superficie_ha || 0;
     const pc = area > 0 ? apta / area * 100 : 0;
     tarjetas.push(tarjetaRosca(titulo, [
@@ -1095,7 +1121,9 @@ function pintarRoscas(d, a, b) {
         return { valor, color, nombre, etiqueta: `${nombre}: ${fmt(valor)} ha` };
       });
     const suma = partes.reduce((x, y) => x + y.valor, 0);
-    tarjetas.push(tarjetaRosca(capa.titulo, partes, compacto(suma), T.sinClase));
+    tarjetas.push(tarjetaRosca(
+      icono(iconoCapa(capa.id), 13) + ' ' + capa.titulo,
+      partes, compacto(suma), T.sinClase));
   });
 
   document.getElementById('roscas').innerHTML = tarjetas.join('');
@@ -1116,8 +1144,9 @@ function pintar() {
   const capasDelRecurso = CAPAS_RASTER.filter(c =>
     c.recurso === (esSolar() ? 'solar' : 'eolico'));
   segmentos(document.getElementById('segCapa'),
-    [{ valor: 'coropletico', rotulo: T.coropletico }]
-      .concat(capasDelRecurso.map(c => ({ valor: c.id, rotulo: c.titulo }))),
+    [{ valor: 'coropletico', rotulo: T.coropletico, icono: 'mapa' }]
+      .concat(capasDelRecurso.map(c => ({ valor: c.id, rotulo: c.titulo,
+                                          icono: iconoCapa(c.id) }))),
     estado.capa, v => { estado.capa = v; }, true);
   if (estado.capa !== 'coropletico' && !capasDelRecurso.some(c => c.id === estado.capa)) {
     // Al cambiar de recurso, saltar a la capa equivalente del otro.
@@ -1242,11 +1271,11 @@ function pintar() {
 
   const cajaLey = document.getElementById('leyendaMapa');
   if (capaActiva) {
-    cajaLey.innerHTML = `<div class="tit">${capaActiva.titulo}</div>
-      <div class="items">` + capaActiva.leyenda.map(
+    cajaLey.innerHTML = `<div class="tit">${icono(iconoCapa(capaActiva.id), 12)}
+      ${capaActiva.titulo}</div><div class="items">` + capaActiva.leyenda.map(
       ([c, t]) => `<div><i style="background:${c}"></i>${t}</div>`).join('') + '</div>';
   } else {
-    cajaLey.innerHTML = `<div class="tit">${T.leyendaCoro}</div>
+    cajaLey.innerHTML = `<div class="tit">${icono('mapa', 12)} ${T.leyendaCoro}</div>
       <div class="escala"><span>0</span>
       <div class="rampa" style="background:linear-gradient(90deg,${rampa().join(',')})"></div>
       <span class="num">${fmt(max)}</span></div>`;
