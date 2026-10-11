@@ -60,6 +60,14 @@ Dirección del tipo `https://zer-peru.netlify.app`.
 
 ---
 
+## Cómo se usa el mapa
+
+Los botones de la esquina acercan, alejan y vuelven a la vista del país
+completo. También se puede hacer **Ctrl + rueda** sobre el mapa, doble clic
+para acercar, y arrastrar para desplazarse. La rueda a secas sigue
+desplazando la página, para no dejar al lector atrapado a media pantalla.
+La leyenda va dentro del mapa y cambia con la capa elegida.
+
 ## El mapa base
 
 Es la imagen satelital **Blue Marble** de la NASA, con sombreado de relieve y
